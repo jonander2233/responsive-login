@@ -45,11 +45,55 @@ function getAttributes(text) {
             iva: invoice.total_tax?.value || "N/A",
             total: invoice.total_amount?.value || "N/A"
         };
-
-        return extractedData;
+        return makeJSON(extractedData);
     } catch (error) {
         console.error("Error al procesar el JSON:", error);
         return null;
     }
 }
+
+function makeJSON(data) {
+    try {
+        let jsonString = JSON.stringify(data, null, 2);
+        console.log("JSON construido:", jsonString);
+        return jsonString;
+    } catch (error) {
+        console.error("Error al construir el JSON:", error);
+        return null;
+    }
+}
+async function microsoftGetKey() {
+    const url = "https://login.microsoftonline.com/c4047ea2-d3da-44e9-9938-a732a6f96b47/oauth2/v2.0/token";
+    
+    const params = new URLSearchParams();
+    params.append("scope", "https://api.businesscentral.dynamics.com/.default");
+    params.append("client_id", "d5131a6c-2017-4190-ba08-e7d3027c0e2f");
+    params.append("client_secret", "1QT8Q~fh6YOodrWpMEtiJP8JuG1YcDuWP8vz8b~Tt");
+    params.append("grant_type", "client_credentials");
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: params
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Access Token:", data.access_token);
+        return data.access_token;
+
+    } catch (error) {
+        console.error("Error obteniendo el token:", error);
+        return null;
+    }
+}
+
+// Llamar a la función
+microsoftGetKey();
 
