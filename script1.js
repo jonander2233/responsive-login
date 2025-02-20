@@ -1,11 +1,8 @@
-
-
-
 const mindeeSubmit = (evt) => {
-    evt.preventDefault()
+    evt.preventDefault();
     let myFileInput = document.getElementById('invoice');
-    let myFile = myFileInput.files[0]
-    if (!myFile) { return }
+    let myFile = myFileInput.files[0];
+    if (!myFile) { return; }
     let data = new FormData();
     data.append("document", myFile, myFile.name);
 
@@ -13,8 +10,6 @@ const mindeeSubmit = (evt) => {
 
     xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
-            // console.log(this.responseText);
-            // getAttributes(this.responseText);
             console.log(getAttributes(this.responseText));
         }
     });
@@ -22,13 +17,14 @@ const mindeeSubmit = (evt) => {
     xhr.open("POST", "https://api.mindee.net/v1/products/mindee/invoices/v4/predict");
     xhr.setRequestHeader("Authorization", "Token 975e91b75459a45d0d94023575866d91");
     xhr.send(data);
-    
 }
+
 function getAttributes(text) {
+    
     try {
         let data = JSON.parse(text);
         let invoice = data.document.inference.pages[0].prediction;
-        
+
         let direccion = invoice.supplier_address?.value || "N/A";
         let postal = typeof direccion === "string" ? direccion.match(/\d{5}/)?.[0] || "N/A" : "N/A";
         let poblacion = typeof direccion === "string" ? direccion.split(" ").slice(1).join(" ") || "N/A" : "N/A";
@@ -62,30 +58,4 @@ function makeJSON(data) {
         return null;
     }
 }
-async function microsoftGetKey() {
-    const url = "https://login.microsoftonline.com/c4047ea2-d3da-44e9-9938-a732a6f96b47/oauth2/v2.0/token";
-
-    const params = new URLSearchParams();
-    params.append("client_id", "d5131a6c-2017-4190-ba08-e7d3027c0e2f");
-    params.append("client_secret", "1QT8Q~fh6YOodrWpMEtiJP8JuG1YcDuWP8vz8b~T");
-    params.append("grant_type", "client_credentials");
-    params.append("scope", "https://api.businesscentral.dynamics.com/.default");
-
-    try {
-        const response = await fetch("https://cors-anywhere.herokuapp.com/" + url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: params
-        });
-
-        const data = await response.json();
-        console.log("Access Token:", data.access_token || data);
-    } catch (error) {
-        console.error("Error obteniendo el token:", error);
-    }
-}
-
-microsoftGetKey();
 
