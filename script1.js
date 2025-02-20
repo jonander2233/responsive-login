@@ -64,15 +64,15 @@ function makeJSON(data) {
 }
 async function microsoftGetKey() {
     const url = "https://login.microsoftonline.com/c4047ea2-d3da-44e9-9938-a732a6f96b47/oauth2/v2.0/token";
-    
+
     const params = new URLSearchParams();
-    params.append("scope", "https://api.businesscentral.dynamics.com/.default");
     params.append("client_id", "d5131a6c-2017-4190-ba08-e7d3027c0e2f");
-    params.append("client_secret", "1QT8Q~fh6YOodrWpMEtiJP8JuG1YcDuWP8vz8b~Tt");
+    params.append("client_secret", "1QT8Q~fh6YOodrWpMEtiJP8JuG1YcDuWP8vz8b~T");
     params.append("grant_type", "client_credentials");
+    params.append("scope", "https://api.businesscentral.dynamics.com/.default");
 
     try {
-        const response = await fetch(url, {
+        const response = await fetch("https://cors-anywhere.herokuapp.com/" + url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -80,20 +80,12 @@ async function microsoftGetKey() {
             body: params
         });
 
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-
         const data = await response.json();
-        console.log("Access Token:", data.access_token);
-        return data.access_token;
-
+        console.log("Access Token:", data.access_token || data);
     } catch (error) {
         console.error("Error obteniendo el token:", error);
-        return null;
     }
 }
 
-// Llamar a la función
 microsoftGetKey();
 
